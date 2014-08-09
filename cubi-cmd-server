@@ -1,0 +1,33 @@
+#! /usr/bin/env python
+import os
+import cubi.engine as engine
+import cubi.logger as logger
+import cubi.params as params
+from cubi.engine import Servant;
+
+from pygments.formatters import HtmlFormatter
+from pygments.lexers import get_lexer_by_name
+from pygments import highlight
+
+class CmdServant(Servant):
+
+    def _init(self, engine, adapter):
+        pass
+
+    @params.extract_args
+    def run(self, cmd):
+
+        ret = os.popen(cmd).read()
+        result = {}
+        result['data'] = ret;
+        return result
+
+if __name__ == '__main__':
+
+    # logger.enable_debug_log()
+
+    endp = "cmd@tcp::2017"
+    setting = {}
+    setting['debug'] = True
+    setting['endpoint'] = endp
+    engine.make_easy_engine('cmd', CmdServant, setting).serve_forever()
